@@ -16,7 +16,6 @@ fn parse_input(input: &str) -> (Vec<i64>, Vec<char>) {
             instructions = line.chars().collect();
         }
     });
-    
 
     (radians, instructions)
 }
@@ -41,12 +40,47 @@ fn part_one(input: &str) -> i64 {
     total
 }
 
-fn part_two(_input: &str) -> usize {
-    0
+fn part_two(input: &str) -> i64 {
+    let (mut radians, instructions) = parse_input(input);
+    radians.reverse();
+
+    let mut total = radians.pop().unwrap();
+
+    let mut pairs = radians.iter().zip(instructions.iter()).rev();
+
+    while let Some((radian, instruction)) = pairs.next() {
+        match instruction {
+            '+' => total += radian,
+            '-' => total -= radian,
+            _ => panic!("Not a valid instruction"),
+        }
+    }
+
+    total
 }
 
-fn part_three(_input: &str) -> usize {
-    0
+fn part_three(input: &str) -> i64 {
+    let (mut radians, mut instructions) = parse_input(input);
+    radians.reverse();
+    instructions.reverse();
+
+    let mut total = radians.pop().unwrap() * 10 + radians.pop().unwrap();
+    radians.reverse();
+
+    let mut pairs = radians
+        .chunks(2)
+        .map(|chunk| chunk[0] * 10 + chunk[1])
+        .zip(instructions.iter());
+
+    while let Some((radian, instruction)) = pairs.next() {
+        match instruction {
+            '+' => total += radian,
+            '-' => total -= radian,
+            _ => panic!("Not a valid instruction"),
+        }
+    }
+
+    total
 }
 
 #[cfg(test)]
@@ -72,11 +106,11 @@ mod test {
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 0);
+        assert_eq!(part_two(INPUT), 23);
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 189);
     }
 }
