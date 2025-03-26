@@ -27,9 +27,9 @@ fn part_one(input: &str) -> i64 {
 
     let mut total = radians.pop().unwrap();
 
-    let mut pairs = radians.iter().zip(instructions.iter()).rev();
+    let pairs = radians.iter().zip(instructions.iter()).rev();
 
-    while let Some((radian, instruction)) = pairs.next() {
+    for (radian, instruction) in pairs {
         match instruction {
             '+' => total += radian,
             '-' => total -= radian,
@@ -46,9 +46,9 @@ fn part_two(input: &str) -> i64 {
 
     let mut total = radians.pop().unwrap();
 
-    let mut pairs = radians.iter().zip(instructions.iter()).rev();
+    let pairs = radians.iter().zip(instructions.iter()).rev();
 
-    while let Some((radian, instruction)) = pairs.next() {
+    for (radian, instruction) in pairs {
         match instruction {
             '+' => total += radian,
             '-' => total -= radian,
@@ -67,12 +67,12 @@ fn part_three(input: &str) -> i64 {
     let mut total = radians.pop().unwrap() * 10 + radians.pop().unwrap();
     radians.reverse();
 
-    let mut pairs = radians
+    let pairs = radians
         .chunks(2)
         .map(|chunk| chunk[0] * 10 + chunk[1])
         .zip(instructions.iter());
 
-    while let Some((radian, instruction)) = pairs.next() {
+    for (radian, instruction) in pairs {
         match instruction {
             '+' => total += radian,
             '-' => total -= radian,

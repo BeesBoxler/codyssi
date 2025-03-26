@@ -23,12 +23,12 @@ impl FromStr for Instructions {
 
         fn get_method(line: &str) -> Box<dyn Fn(Number) -> Number> {
             let words = line.split_whitespace().collect::<Vec<_>>();
-            let value = words[words.len() -1].parse::<Number>().unwrap();
-            let instruction = words[words.len() -2];
+            let value = words[words.len() - 1].parse::<Number>().unwrap();
+            let instruction = words[words.len() - 2];
 
             match instruction {
                 "ADD" => Box::new(move |x| x + value),
-                "MULTIPLY" =>  Box::new(move |x| x * value),
+                "MULTIPLY" => Box::new(move |x| x * value),
                 _ => Box::new(move |x| x.pow(value as u32)),
             }
         }
@@ -42,31 +42,38 @@ impl FromStr for Instructions {
 }
 
 fn parse(input: &str) -> (Instructions, Vec<Number>) {
-    let (instructions, values) =input.split_once("\n\n").unwrap();
-    
+    let (instructions, values) = input.split_once("\n\n").unwrap();
+
     (
         instructions.parse().unwrap(),
-        values.lines().map(|v| v.parse().unwrap()).collect()
+        values.lines().map(|v| v.parse().unwrap()).collect(),
     )
-
 }
 
 fn part_one(input: &str) -> Number {
     let (instructions, mut values) = parse(input);
     values.sort();
 
-    (instructions.a)((instructions.b)((instructions.c)(values[values.len()/2])))
+    (instructions.a)((instructions.b)((instructions.c)(values[values.len() / 2])))
 }
 
 fn part_two(input: &str) -> Number {
-    let (instructions, mut values) = parse(input);
+    let (instructions, values) = parse(input);
     let room_values = values.iter().filter(|v| **v % 2 == 0).sum();
 
     (instructions.a)((instructions.b)((instructions.c)(room_values)))
 }
 
-fn part_three(_input: &str) -> i64 {
-    0
+fn part_three(input: &str) -> Number {
+    let (instructions, mut values) = parse(input);
+    let upper_bound: Number = 15000000000000;
+    values.sort();
+    values.reverse();
+
+    *values
+        .iter()
+        .find(|value| (instructions.a)((instructions.b)((instructions.c)(**value))) < upper_bound)
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -101,6 +108,6 @@ Function C: RAISE TO THE POWER OF 3
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 5496);
     }
 }
