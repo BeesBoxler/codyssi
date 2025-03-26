@@ -58,8 +58,11 @@ fn part_one(input: &str) -> Number {
     (instructions.a)((instructions.b)((instructions.c)(values[values.len()/2])))
 }
 
-fn part_two(_input: &str) -> i64 {
-    0
+fn part_two(input: &str) -> Number {
+    let (instructions, mut values) = parse(input);
+    let room_values = values.iter().filter(|v| **v % 2 == 0).sum();
+
+    (instructions.a)((instructions.b)((instructions.c)(room_values)))
 }
 
 fn part_three(_input: &str) -> i64 {
