@@ -1,7 +1,8 @@
-#[allow(dead_code)]
+#![allow(dead_code)]
 mod day01;
 mod day02;
+mod day03;
 
 pub fn run_day(input: &str) {
-    day02::run(input);
+    day03::run(input);
 }

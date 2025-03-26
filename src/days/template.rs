@@ -5,15 +5,17 @@ pub fn run(input: &str) {
     println!("  Part 3: {}", part_three(input));
 }
 
-fn part_one(_input: &str) -> i64 {
+type Number = usize;
+
+fn part_one(_input: &str) -> Number {
     0
 }
 
-fn part_two(input: &str) -> i64 {
+fn part_two(_input: &str) -> Number {
     0
 }
 
-fn part_three(_input: &str) -> i64 {
+fn part_three(_input: &str) -> Number {
     0
 }
 
