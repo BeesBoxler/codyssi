@@ -1,5 +1,5 @@
 pub fn run(input: &str) {
-    println!("Day X:");
+    println!("Day 4:");
     println!("  Part 1: {}", part_one(input));
     println!("  Part 2: {}", part_two(input));
     println!("  Part 3: {}", part_three(input));
