@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{cmp::Ordering, str::FromStr};
 
 pub fn run(input: &str) {
     println!("Day 5:");
@@ -64,8 +64,32 @@ fn part_two(input: &str) -> Number {
         .unwrap()
 }
 
-fn part_three(_input: &str) -> Number {
-    0
+fn part_three(input: &str) -> Number {
+    let sort_by_distance_than_value = |a: &Point, b: &Point, previous: &Point| -> Ordering {
+        let cmp = &a.manhattan(previous).cmp(&b.manhattan(previous));
+
+        if cmp != &Ordering::Equal {
+            *cmp
+        } else if a.0 != b.0 {
+            a.0.cmp(&b.0)
+        } else {
+            a.1.cmp(&b.1)
+        }
+    };
+
+    let mut total = 0;
+    let mut curr = Point(0, 0);
+    let mut points = parse_input(input);
+
+    while !points.is_empty() {
+        points.sort_by(|a, b| sort_by_distance_than_value(a, b, &curr));
+        points.reverse();
+        let new = points.pop().unwrap();
+        total += new.manhattan(&curr);
+        curr = new;
+    }
+
+    total
 }
 
 #[cfg(test)]
@@ -93,6 +117,6 @@ mod test {
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 1384);
     }
 }
