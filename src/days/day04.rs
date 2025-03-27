@@ -11,27 +11,68 @@ const NUMBER_OFFSET: u8 = 48;
 type Number = usize;
 
 fn parse_input(input: &str) -> Vec<Vec<Number>> {
-    input.lines().map(|line| line.bytes().map(|byte| (byte - ALPHABET_OFFSET) as Number).collect()).collect()
-} 
+    input
+        .lines()
+        .map(|line| {
+            line.bytes()
+                .map(|byte| (byte - ALPHABET_OFFSET) as Number)
+                .collect()
+        })
+        .collect()
+}
 
 fn part_one(input: &str) -> Number {
-    parse_input(input).iter().map(|line| line.iter().sum::<Number>()).sum()
+    parse_input(input)
+        .iter()
+        .map(|line| line.iter().sum::<Number>())
+        .sum()
 }
 
 fn part_two(input: &str) -> Number {
-    parse_input(input).iter().map(|line| {
-        let len = line.len();
-        let buffer = len / 10;
-        let removed = len - 2*buffer;
+    parse_input(input)
+        .iter()
+        .map(|line| {
+            let len = line.len();
+            let buffer = len / 10;
+            let removed = len - 2 * buffer;
 
-        line[0..buffer].iter().sum::<Number>()
-        + removed.to_string().bytes().map(|x| (x - NUMBER_OFFSET) as Number).sum::<Number>()
-        + line[len-buffer..len].iter().sum::<Number>()
-    }).sum()
+            line[0..buffer].iter().sum::<Number>()
+                + number_to_value(removed)
+                + line[len - buffer..len].iter().sum::<Number>()
+        })
+        .sum()
 }
 
-fn part_three(_input: &str) -> Number {
-    0
+fn number_to_value(number: Number) -> Number {
+    number
+        .to_string()
+        .bytes()
+        .map(|x| (x - NUMBER_OFFSET) as Number)
+        .sum::<Number>()
+}
+
+fn part_three(input: &str) -> Number {
+    let mut total = 0;
+    let mut curr = 0;
+    let mut count = 0;
+
+    for line in parse_input(input) {
+        for byte in line {
+            if byte == curr {
+                count += 1;
+            } else {
+                total += curr + number_to_value(count);
+                curr = byte;
+                count = 1;
+            }
+        }
+
+        total += curr + number_to_value(count);
+        curr = 0;
+        count = 0;
+    }
+
+    total
 }
 
 #[cfg(test)]
@@ -56,6 +97,6 @@ NNNNNNBBVVVVVVVVV";
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 539);
     }
 }
