@@ -5,7 +5,8 @@ mod day03;
 mod day04;
 mod day05;
 mod day06;
+mod day07;
 
 pub fn run_day(input: &str) {
-    day06::run(input);
+    day07::run(input);
 }
