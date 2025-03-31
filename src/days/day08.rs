@@ -54,21 +54,14 @@ fn part_one(input: &str) -> Number {
     let (mut ledger, instructions) = parse_input(input);
 
     for Instruction { from, to, amount } in instructions {
-        {
-            let from = ledger.get_mut(&from).unwrap();
-            *from -= amount;
-        }
-        {
-            let to = ledger.get_mut(&to).unwrap();
-            *to += amount;
-        }
+        *ledger.get_mut(&from).unwrap() -= amount;
+        *ledger.get_mut(&to).unwrap() += amount;
     }
 
     let mut values = ledger.values().collect::<Vec<_>>();
     values.sort();
-    values.reverse();
 
-    values[..3].iter().map(|v| **v).sum()
+    values[values.len() - 3..].iter().map(|v| **v).sum()
 }
 
 fn part_two(input: &str) -> Number {
@@ -85,17 +78,13 @@ fn part_two(input: &str) -> Number {
             amount = amount.min(*from);
             *from -= amount;
         }
-        {
-            let to = ledger.get_mut(&to).unwrap();
-            *to += amount;
-        }
+        *ledger.get_mut(&to).unwrap() += amount;
     }
 
     let mut values = ledger.values().collect::<Vec<_>>();
     values.sort();
-    values.reverse();
 
-    values[..3].iter().map(|v| **v).sum()
+    values[values.len() - 3..].iter().map(|v| **v).sum()
 }
 
 fn part_three(_input: &str) -> Number {
@@ -136,6 +125,6 @@ FROM Charlie TO Delta AMT 302";
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 2511);
     }
 }
