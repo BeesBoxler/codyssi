@@ -38,7 +38,7 @@ fn parse_input(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
         .map(|v| v.parse().unwrap())
         .collect();
     let swaps = sections.next().unwrap().lines().map(|line| line.parse().unwrap()).collect();
-    let check = sections.next().unwrap().parse().unwrap();
+    let check = sections.next().unwrap().parse::<usize>().unwrap() -1;
 
     (values, swaps, check)
 }
@@ -48,7 +48,7 @@ fn part_one(input: &str) -> Number {
 
     swaps.iter().for_each(|swap| values.swap(swap.0, swap.1));
 
-    values[check - 1]
+    values[check]
 }
 
 fn part_two(input: &str) -> Number {
@@ -62,11 +62,25 @@ fn part_two(input: &str) -> Number {
         values[swap.0] = hold;
     });
 
-    values[check - 1]
+    values[check]
 }
 
-fn part_three(_input: &str) -> Number {
-    0
+fn part_three(input: &str) -> Number {
+    let (mut values, swaps, check) = parse_input(input);
+
+    for swap in swaps {
+        let mut i = swap.0.min(swap.1);
+        let mut j = swap.1.max(swap.0);
+        let max = j;
+
+        while i < max && j < values.len() {
+            values.swap(i,j);
+            i += 1;
+            j += 1;
+        }
+    }
+
+    values[check]
 }
 
 #[cfg(test)]
@@ -114,6 +128,6 @@ mod test {
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        assert_eq!(part_three(INPUT), 827);
     }
 }
