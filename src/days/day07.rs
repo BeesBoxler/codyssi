@@ -37,8 +37,13 @@ fn parse_input(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
         .lines()
         .map(|v| v.parse().unwrap())
         .collect();
-    let swaps = sections.next().unwrap().lines().map(|line| line.parse().unwrap()).collect();
-    let check = sections.next().unwrap().parse::<usize>().unwrap() -1;
+    let swaps = sections
+        .next()
+        .unwrap()
+        .lines()
+        .map(|line| line.parse().unwrap())
+        .collect();
+    let check = sections.next().unwrap().parse::<usize>().unwrap() - 1;
 
     (values, swaps, check)
 }
@@ -55,12 +60,15 @@ fn part_two(input: &str) -> Number {
     let (mut values, mut swaps, check) = parse_input(input);
     swaps.push(swaps[0].clone());
 
-    swaps.windows(2).map(|swaps| Swap3(swaps[0].0, swaps[0].1, swaps[1].0)).for_each(|swap| {
-        let hold = values[swap.2];
-        values[swap.2] = values[swap.1];
-        values[swap.1] = values[swap.0];
-        values[swap.0] = hold;
-    });
+    swaps
+        .windows(2)
+        .map(|swaps| Swap3(swaps[0].0, swaps[0].1, swaps[1].0))
+        .for_each(|swap| {
+            let hold = values[swap.2];
+            values[swap.2] = values[swap.1];
+            values[swap.1] = values[swap.0];
+            values[swap.0] = hold;
+        });
 
     values[check]
 }
@@ -74,7 +82,7 @@ fn part_three(input: &str) -> Number {
         let max = j;
 
         while i < max && j < values.len() {
-            values.swap(i,j);
+            values.swap(i, j);
             i += 1;
             j += 1;
         }
