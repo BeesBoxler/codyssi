@@ -10,7 +10,7 @@ pub fn run(input: &str) {
 
 type Number = usize;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Swap2(usize, usize);
 
 #[derive(Debug)]
@@ -29,27 +29,7 @@ impl FromStr for Swap2 {
     }
 }
 
-fn create_swap2_vec(input: &str) -> Vec<Swap2> {
-    input.lines().map(|line| line.parse().unwrap()).collect()
-}
-
-fn create_swap3_vec(input: &str) -> Vec<Swap3> {
-    let mut lines = input.lines().collect::<Vec<_>>();
-    lines.push(lines[0]);
-    lines
-        .windows(2)
-        .map(|w| {
-            let ints = w
-                .iter()
-                .flat_map(|line| line.split('-').map(|c| c.parse::<usize>().unwrap() - 1))
-                .collect::<Vec<_>>();
-
-            Swap3(ints[0], ints[1], ints[2])
-        })
-        .collect()
-}
-
-fn parse_input2(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
+fn parse_input(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
     let mut sections = input.split("\n\n");
     let values = sections
         .next()
@@ -57,28 +37,14 @@ fn parse_input2(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
         .lines()
         .map(|v| v.parse().unwrap())
         .collect();
-    let swaps = create_swap2_vec(sections.next().unwrap());
-    let check = sections.next().unwrap().parse().unwrap();
-
-    (values, swaps, check)
-}
-
-fn parse_input3(input: &str) -> (Vec<Number>, Vec<Swap3>, Number) {
-    let mut sections = input.split("\n\n");
-    let values = sections
-        .next()
-        .unwrap()
-        .lines()
-        .map(|v| v.parse().unwrap())
-        .collect();
-    let swaps = create_swap3_vec(sections.next().unwrap());
+    let swaps = sections.next().unwrap().lines().map(|line| line.parse().unwrap()).collect();
     let check = sections.next().unwrap().parse().unwrap();
 
     (values, swaps, check)
 }
 
 fn part_one(input: &str) -> Number {
-    let (mut values, swaps, check) = parse_input2(input);
+    let (mut values, swaps, check) = parse_input(input);
 
     swaps.iter().for_each(|swap| values.swap(swap.0, swap.1));
 
@@ -86,9 +52,10 @@ fn part_one(input: &str) -> Number {
 }
 
 fn part_two(input: &str) -> Number {
-    let (mut values, swaps, check) = parse_input3(input);
+    let (mut values, mut swaps, check) = parse_input(input);
+    swaps.push(swaps[0].clone());
 
-    swaps.iter().for_each(|swap| {
+    swaps.windows(2).map(|swaps| Swap3(swaps[0].0, swaps[0].1, swaps[1].0)).for_each(|swap| {
         let hold = values[swap.2];
         values[swap.2] = values[swap.1];
         values[swap.1] = values[swap.0];
