@@ -1,10 +1,55 @@
 use std::str::FromStr;
 
-pub fn run(input: &str) {
-    println!("Day 2:");
-    println!("  Part 1: {}", part_one(input));
-    println!("  Part 2: {}", part_two(input));
-    println!("  Part 3: {}", part_three(input));
+use crate::problem::Problem;
+
+pub struct Problem2;
+
+impl Problem for Problem2 {
+    fn get_input(&self) -> String {
+        "input2".into()
+    }
+
+    fn get_title(&self) -> String {
+        "Problem 2: Absurd Arithmetic!".into()
+    }
+
+    fn part_one(&self, input: &str) -> String {
+        let (instructions, mut values) = parse(input);
+        values.sort();
+
+        format!(
+            "{}",
+            (instructions.a)((instructions.b)((instructions.c)(values[values.len() / 2])))
+        )
+    }
+
+    fn part_two(&self, input: &str) -> String {
+        let (instructions, values) = parse(input);
+        let room_values = values.iter().filter(|v| **v % 2 == 0).sum();
+
+        format!(
+            "{}",
+            (instructions.a)((instructions.b)((instructions.c)(room_values)))
+        )
+    }
+
+    fn part_three(&self, input: &str) -> String {
+        let (instructions, mut values) = parse(input);
+        let upper_bound: Number = 15000000000000;
+        values.sort();
+        values.reverse();
+
+        format!(
+            "{}",
+            *values
+                .iter()
+                .find(
+                    |value| (instructions.a)((instructions.b)((instructions.c)(**value)))
+                        < upper_bound
+                )
+                .unwrap()
+        )
+    }
 }
 
 type Number = u64;
@@ -50,32 +95,6 @@ fn parse(input: &str) -> (Instructions, Vec<Number>) {
     )
 }
 
-fn part_one(input: &str) -> Number {
-    let (instructions, mut values) = parse(input);
-    values.sort();
-
-    (instructions.a)((instructions.b)((instructions.c)(values[values.len() / 2])))
-}
-
-fn part_two(input: &str) -> Number {
-    let (instructions, values) = parse(input);
-    let room_values = values.iter().filter(|v| **v % 2 == 0).sum();
-
-    (instructions.a)((instructions.b)((instructions.c)(room_values)))
-}
-
-fn part_three(input: &str) -> Number {
-    let (instructions, mut values) = parse(input);
-    let upper_bound: Number = 15000000000000;
-    values.sort();
-    values.reverse();
-
-    *values
-        .iter()
-        .find(|value| (instructions.a)((instructions.b)((instructions.c)(**value))) < upper_bound)
-        .unwrap()
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -98,16 +117,19 @@ Function C: RAISE TO THE POWER OF 3
 
     #[test]
     fn part_one_returns_correct_output() {
-        assert_eq!(part_one(INPUT), 9130674516975);
+        let problem = Problem2;
+        assert_eq!(problem.part_one(INPUT), "9130674516975");
     }
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 1000986169836015);
+        let problem = Problem2;
+        assert_eq!(problem.part_two(INPUT), "1000986169836015");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 5496);
+        let problem = Problem2;
+        assert_eq!(problem.part_three(INPUT), "5496");
     }
 }

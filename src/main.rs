@@ -1,10 +1,9 @@
 use std::fs::read_to_string;
 
 mod days;
+mod problem;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let input = read_to_string("input.txt")?;
-
-    days::run_day(&input);
+    days::run();
     Ok(())
 }

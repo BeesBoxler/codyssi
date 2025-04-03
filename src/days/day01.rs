@@ -1,8 +1,78 @@
-pub fn run(input: &str) {
-    println!("Day 1:");
-    println!("  Part 1: {}", part_one(input));
-    println!("  Part 2: {}", part_two(input));
-    println!("  Part 3: {}", part_three(input));
+use crate::problem::Problem;
+
+pub struct Problem1;
+
+impl Problem for Problem1 {
+    fn get_input(&self) -> String {
+        "input1".into()
+    }
+
+    fn get_title(&self) -> String {
+        "Problem 1: Compass Calibration".into()
+    }
+
+    fn part_one(&self, input: &str) -> String {
+        let (mut radians, mut instructions) = parse_input(input);
+        radians.reverse();
+        instructions.reverse();
+
+        let mut total = radians.pop().unwrap();
+
+        let pairs = radians.iter().zip(instructions.iter()).rev();
+
+        for (radian, instruction) in pairs {
+            match instruction {
+                '+' => total += radian,
+                '-' => total -= radian,
+                _ => panic!("Not a valid instruction"),
+            }
+        }
+
+        format!("{total}")
+    }
+
+    fn part_two(&self, input: &str) -> String {
+        let (mut radians, instructions) = parse_input(input);
+        radians.reverse();
+
+        let mut total = radians.pop().unwrap();
+
+        let pairs = radians.iter().zip(instructions.iter()).rev();
+
+        for (radian, instruction) in pairs {
+            match instruction {
+                '+' => total += radian,
+                '-' => total -= radian,
+                _ => panic!("Not a valid instruction"),
+            }
+        }
+
+        format!("{total}")
+    }
+
+    fn part_three(&self, input: &str) -> String {
+        let (mut radians, mut instructions) = parse_input(input);
+        radians.reverse();
+        instructions.reverse();
+
+        let mut total = radians.pop().unwrap() * 10 + radians.pop().unwrap();
+        radians.reverse();
+
+        let pairs = radians
+            .chunks(2)
+            .map(|chunk| chunk[0] * 10 + chunk[1])
+            .zip(instructions.iter());
+
+        for (radian, instruction) in pairs {
+            match instruction {
+                '+' => total += radian,
+                '-' => total -= radian,
+                _ => panic!("Not a valid instruction"),
+            }
+        }
+
+        format!("{total}")
+    }
 }
 
 fn parse_input(input: &str) -> (Vec<i64>, Vec<char>) {
@@ -18,69 +88,6 @@ fn parse_input(input: &str) -> (Vec<i64>, Vec<char>) {
     });
 
     (radians, instructions)
-}
-
-fn part_one(input: &str) -> i64 {
-    let (mut radians, mut instructions) = parse_input(input);
-    radians.reverse();
-    instructions.reverse();
-
-    let mut total = radians.pop().unwrap();
-
-    let pairs = radians.iter().zip(instructions.iter()).rev();
-
-    for (radian, instruction) in pairs {
-        match instruction {
-            '+' => total += radian,
-            '-' => total -= radian,
-            _ => panic!("Not a valid instruction"),
-        }
-    }
-
-    total
-}
-
-fn part_two(input: &str) -> i64 {
-    let (mut radians, instructions) = parse_input(input);
-    radians.reverse();
-
-    let mut total = radians.pop().unwrap();
-
-    let pairs = radians.iter().zip(instructions.iter()).rev();
-
-    for (radian, instruction) in pairs {
-        match instruction {
-            '+' => total += radian,
-            '-' => total -= radian,
-            _ => panic!("Not a valid instruction"),
-        }
-    }
-
-    total
-}
-
-fn part_three(input: &str) -> i64 {
-    let (mut radians, mut instructions) = parse_input(input);
-    radians.reverse();
-    instructions.reverse();
-
-    let mut total = radians.pop().unwrap() * 10 + radians.pop().unwrap();
-    radians.reverse();
-
-    let pairs = radians
-        .chunks(2)
-        .map(|chunk| chunk[0] * 10 + chunk[1])
-        .zip(instructions.iter());
-
-    for (radian, instruction) in pairs {
-        match instruction {
-            '+' => total += radian,
-            '-' => total -= radian,
-            _ => panic!("Not a valid instruction"),
-        }
-    }
-
-    total
 }
 
 #[cfg(test)]
@@ -101,16 +108,19 @@ mod test {
 
     #[test]
     fn part_one_returns_correct_output() {
-        assert_eq!(part_one(INPUT), 21);
+        let problem = Problem1;
+        assert_eq!(problem.part_one(INPUT), "21");
     }
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 23);
+        let problem = Problem1;
+        assert_eq!(problem.part_two(INPUT), "23");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 189);
+        let problem = Problem1;
+        assert_eq!(problem.part_three(INPUT), "189");
     }
 }
