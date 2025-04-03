@@ -1,22 +1,29 @@
-pub fn run(input: &str) {
-    println!("Day X:");
-    println!("  Part 1: {}", part_one(input));
-    println!("  Part 2: {}", part_two(input));
-    println!("  Part 3: {}", part_three(input));
-}
+use std::str::FromStr;
 
-type Number = usize;
+use crate::problem::Problem;
 
-fn part_one(_input: &str) -> Number {
-    0
-}
+pub struct ProblemX;
 
-fn part_two(_input: &str) -> Number {
-    0
-}
+impl Problem for ProblemX {
+    fn get_input(&self) -> String {
+        "inputX".into()
+    }
 
-fn part_three(_input: &str) -> Number {
-    0
+    fn get_title(&self) -> String {
+        "Problem X: __________".into()
+    }
+
+    fn part_one(&self, _input: &str) -> String {
+        "".into()
+    }
+
+    fn part_two(&self, _input: &str) -> String {
+        "".into()
+    }
+
+    fn part_three(&self, _input: &str) -> String {
+        "".into()
+    }
 }
 
 #[cfg(test)]
@@ -27,16 +34,19 @@ mod test {
 
     #[test]
     fn part_one_returns_correct_output() {
-        assert_eq!(part_one(INPUT), 0);
+        let problem = ProblemX;
+        assert_eq!(problem.part_one(INPUT), "");
     }
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 0);
+        let problem = ProblemX;
+        assert_eq!(problem.part_two(INPUT), "");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 0);
+        let problem = ProblemX;
+        assert_eq!(problem.part_three(INPUT), "");
     }
 }

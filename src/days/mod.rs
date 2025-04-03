@@ -15,7 +15,7 @@ mod day07;
 mod day08;
 
 pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
-    println!("{}:", problem.get_title());
+    println!("{}", problem.get_title());
     println!("  Part One: {}", problem.part_one(input));
     println!("  Part Two: {}", problem.part_two(input));
     println!("  Part Three: {}", problem.part_three(input));
