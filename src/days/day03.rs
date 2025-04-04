@@ -2,11 +2,52 @@ use std::{collections::HashSet, str::FromStr, string::ParseError};
 
 use tuple_map::TupleMap2;
 
-pub fn run(input: &str) {
-    println!("Day 3:");
-    println!("  Part 1: {}", part_one(input));
-    println!("  Part 2: {}", part_two(input));
-    println!("  Part 3: {}", part_three(input));
+use crate::problem::Problem;
+
+pub struct Problem3;
+
+impl Problem for Problem3 {
+    fn get_input(&self) -> String {
+        "input3".into()
+    }
+
+    fn get_title(&self) -> String {
+        "Problem 3: Supplies in Surplus".into()
+    }
+
+    fn part_one(&self, input: &str) -> String {
+        format!(
+            "{}",
+            parse_input(input)
+                .iter()
+                .map(|pair| pair.0.len() + pair.1.len())
+                .sum::<Number>()
+        )
+    }
+
+    fn part_two(&self, input: &str) -> String {
+        format!(
+            "{}",
+            parse_input(input)
+                .iter()
+                .map(|pair| pair.0.union(&pair.1).count())
+                .sum::<Number>()
+        )
+    }
+
+    fn part_three(&self, input: &str) -> String {
+        format!(
+            "{}",
+            parse_input(input)
+                .iter()
+                .map(|pair| pair.0.union(&pair.1).collect::<HashSet<_>>())
+                .collect::<Vec<_>>()
+                .windows(2)
+                .map(|window| window[0].union(&window[1]).count())
+                .max()
+                .unwrap()
+        )
+    }
 }
 
 type Number = usize;
@@ -35,31 +76,6 @@ fn parse_input(input: &str) -> Vec<PairRange> {
     input.lines().map(|line| line.parse().unwrap()).collect()
 }
 
-fn part_one(input: &str) -> Number {
-    parse_input(input)
-        .iter()
-        .map(|pair| pair.0.len() + pair.1.len())
-        .sum()
-}
-
-fn part_two(input: &str) -> Number {
-    parse_input(input)
-        .iter()
-        .map(|pair| pair.0.union(&pair.1).count())
-        .sum()
-}
-
-fn part_three(input: &str) -> Number {
-    parse_input(input)
-        .iter()
-        .map(|pair| pair.0.union(&pair.1).collect::<HashSet<_>>())
-        .collect::<Vec<_>>()
-        .windows(2)
-        .map(|window| window[0].union(&window[1]).count())
-        .max()
-        .unwrap()
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -73,16 +89,19 @@ mod test {
 
     #[test]
     fn part_one_returns_correct_output() {
-        assert_eq!(part_one(INPUT), 43);
+        let problem = Problem3;
+        assert_eq!(problem.part_one(INPUT), "43");
     }
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 35);
+        let problem = Problem3;
+        assert_eq!(problem.part_two(INPUT), "35");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 9);
+        let problem = Problem3;
+        assert_eq!(problem.part_three(INPUT), "9");
     }
 }

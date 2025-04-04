@@ -4,15 +4,13 @@ use std::fs::read_to_string;
 use crate::problem::Problem;
 
 mod day01;
-use day01::Problem1;
 mod day02;
-use day02::Problem2;
 mod day03;
 mod day04;
 mod day05;
 mod day06;
 mod day07;
-mod day08;
+mod day09;
 
 pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
     println!("{}", problem.get_title());
@@ -23,7 +21,17 @@ pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
 }
 
 pub fn run() {
-    let problems: Vec<Box<dyn Problem>> = vec![Box::new(Problem1), Box::new(Problem2)];
+    let problems: Vec<Box<dyn Problem>> = vec![
+        Box::new(day01::Problem1),
+        Box::new(day02::Problem2),
+        Box::new(day03::Problem3),
+        Box::new(day04::Problem4),
+        Box::new(day05::Problem5),
+        Box::new(day06::Problem6),
+        Box::new(day07::Problem7),
+        // I somehow missed day 8? whoops
+        Box::new(day09::Problem9),
+    ];
 
     problems.iter().for_each(|problem| {
         let input = read_to_string(format!("inputs/{}.txt", problem.get_input())).unwrap();

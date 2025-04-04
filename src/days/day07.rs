@@ -1,11 +1,60 @@
+use crate::problem::Problem;
 use std::str::FromStr;
 use tuple_map::TupleMap2;
 
-pub fn run(input: &str) {
-    println!("Day 7:");
-    println!("  Part 1: {}", part_one(input));
-    println!("  Part 2: {}", part_two(input));
-    println!("  Part 3: {}", part_three(input));
+pub struct Problem7;
+
+impl Problem for Problem7 {
+    fn get_input(&self) -> String {
+        "input7".into()
+    }
+
+    fn get_title(&self) -> String {
+        "Problem 7: Siren Disruption".into()
+    }
+
+    fn part_one(&self, input: &str) -> String {
+        let (mut values, swaps, check) = parse_input(input);
+
+        swaps.iter().for_each(|swap| values.swap(swap.0, swap.1));
+
+        format!("{}", values[check])
+    }
+
+    fn part_two(&self, input: &str) -> String {
+        let (mut values, mut swaps, check) = parse_input(input);
+        swaps.push(swaps[0].clone());
+
+        swaps
+            .windows(2)
+            .map(|swaps| Swap3(swaps[0].0, swaps[0].1, swaps[1].0))
+            .for_each(|swap| {
+                let hold = values[swap.2];
+                values[swap.2] = values[swap.1];
+                values[swap.1] = values[swap.0];
+                values[swap.0] = hold;
+            });
+
+        format!("{}", values[check])
+    }
+
+    fn part_three(&self, input: &str) -> String {
+        let (mut values, swaps, check) = parse_input(input);
+
+        for swap in swaps {
+            let mut i = swap.0.min(swap.1);
+            let mut j = swap.1.max(swap.0);
+            let max = j;
+
+            while i < max && j < values.len() {
+                values.swap(i, j);
+                i += 1;
+                j += 1;
+            }
+        }
+
+        format!("{}", values[check])
+    }
 }
 
 type Number = usize;
@@ -48,49 +97,6 @@ fn parse_input(input: &str) -> (Vec<Number>, Vec<Swap2>, Number) {
     (values, swaps, check)
 }
 
-fn part_one(input: &str) -> Number {
-    let (mut values, swaps, check) = parse_input(input);
-
-    swaps.iter().for_each(|swap| values.swap(swap.0, swap.1));
-
-    values[check]
-}
-
-fn part_two(input: &str) -> Number {
-    let (mut values, mut swaps, check) = parse_input(input);
-    swaps.push(swaps[0].clone());
-
-    swaps
-        .windows(2)
-        .map(|swaps| Swap3(swaps[0].0, swaps[0].1, swaps[1].0))
-        .for_each(|swap| {
-            let hold = values[swap.2];
-            values[swap.2] = values[swap.1];
-            values[swap.1] = values[swap.0];
-            values[swap.0] = hold;
-        });
-
-    values[check]
-}
-
-fn part_three(input: &str) -> Number {
-    let (mut values, swaps, check) = parse_input(input);
-
-    for swap in swaps {
-        let mut i = swap.0.min(swap.1);
-        let mut j = swap.1.max(swap.0);
-        let max = j;
-
-        while i < max && j < values.len() {
-            values.swap(i, j);
-            i += 1;
-            j += 1;
-        }
-    }
-
-    values[check]
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
@@ -126,16 +132,19 @@ mod test {
 
     #[test]
     fn part_one_returns_correct_output() {
-        assert_eq!(part_one(INPUT), 45);
+        let problem = Problem7;
+        assert_eq!(problem.part_one(INPUT), "45");
     }
 
     #[test]
     fn part_two_returns_correct_output() {
-        assert_eq!(part_two(INPUT), 796);
+        let problem = Problem7;
+        assert_eq!(problem.part_two(INPUT), "796");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
-        assert_eq!(part_three(INPUT), 827);
+        let problem = Problem7;
+        assert_eq!(problem.part_three(INPUT), "827");
     }
 }
