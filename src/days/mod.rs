@@ -12,6 +12,7 @@ mod day06;
 mod day07;
 mod day08;
 mod day09;
+mod day10;
 
 pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
     println!("{}", problem.get_title());
