@@ -10,6 +10,7 @@ mod day04;
 mod day05;
 mod day06;
 mod day07;
+mod day08;
 mod day09;
 
 pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
@@ -29,6 +30,7 @@ pub fn run() {
         Box::new(day05::Problem5),
         Box::new(day06::Problem6),
         Box::new(day07::Problem7),
+        Box::new(day08::Problem8),
         // I somehow missed day 8? whoops
         Box::new(day09::Problem9),
     ];

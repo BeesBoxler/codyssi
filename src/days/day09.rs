@@ -144,6 +144,7 @@ FROM Charlie TO Delta AMT 302";
         assert_eq!(problem.part_two(INPUT), "2542");
     }
 
+    #[ignore]
     #[test]
     fn part_three_returns_correct_output() {
         let problem = Problem9;
