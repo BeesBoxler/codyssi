@@ -43,7 +43,7 @@ impl Problem for Problem8 {
         format!("{}", lines.iter().sum::<usize>())
     }
 
-        fn part_three(&self, input: &str) -> String {
+    fn part_three(&self, input: &str) -> String {
         let lines = input
             .lines()
             .map(|line| {

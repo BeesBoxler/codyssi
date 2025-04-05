@@ -62,8 +62,53 @@ impl Problem for Problem9 {
         )
     }
 
-    fn part_three(&self, _input: &str) -> String {
-        format!("{}", 0)
+    fn part_three(&self, input: &str) -> String {
+        let (mut ledger, instructions) = parse_input(input);
+        let mut debts: HashMap<String, Vec<(String, Number)>> = HashMap::new();
+
+        for Instruction {
+            from,
+            to,
+            mut amount,
+        } in instructions
+        {
+            let from_balance = ledger.get_mut(&from).unwrap();
+            if amount > *from_balance {
+                let debt = amount - *from_balance;
+                debts.entry(from).or_default().push((to.clone(), debt));
+                amount = *from_balance;
+            }
+
+            *from_balance -= amount;
+            *ledger.get_mut(&to).unwrap() += amount;
+
+            debts.clone().into_keys().for_each(|key| {
+                debts
+                    .entry(key.clone())
+                    .or_default()
+                    .iter_mut()
+                    .for_each(|(debter, amount)| {
+                        let to_balance = ledger.get_mut(&key).unwrap();
+                        if *to_balance > 0 {
+                            let repayable = *to_balance.min(amount);
+                            *amount -= repayable;
+                            *to_balance -= repayable;
+                            *ledger.get_mut(debter).unwrap() += repayable;
+                        }
+                    });
+            });
+        }
+
+        let mut values = ledger.values().collect::<Vec<_>>();
+        values.sort();
+
+        format!(
+            "{}",
+            values[values.len() - 3..]
+                .iter()
+                .map(|v| **v)
+                .sum::<Number>()
+        )
     }
 }
 
@@ -144,7 +189,6 @@ FROM Charlie TO Delta AMT 302";
         assert_eq!(problem.part_two(INPUT), "2542");
     }
 
-    #[ignore]
     #[test]
     fn part_three_returns_correct_output() {
         let problem = Problem9;
