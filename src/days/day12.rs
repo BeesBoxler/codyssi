@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{collections::VecDeque, str::FromStr};
 
 use crate::problem::Problem;
 
@@ -20,31 +20,49 @@ impl Problem for Problem12 {
             .iter()
             .for_each(|instruction| instruction.execute(&mut grid));
 
-        format!(
-            "{}",
-            grid.iter()
-                .map(|row| row.iter().sum::<usize>())
-                .max()
-                .unwrap()
-                .max(
-                    (0..grid[0].len())
-                        .map(|i| (0..grid.len()).map(|j| grid[j][i]).sum::<usize>())
-                        .max()
-                        .unwrap()
-                )
-        )
+        format!("{}", find_largest_value(grid))
     }
 
-    fn part_two(&self, _input: &str) -> String {
-        "".into()
+    fn part_two(&self, input: &str) -> String {
+        let (mut grid, mut instructions, actions) = parse_input(input);
+
+        let mut curr = None;
+
+        for action in actions {
+            match action {
+                Action::Take => curr = instructions.pop_front(),
+                Action::Cycle => instructions.push_back(curr.clone().unwrap()),
+                Action::Act => curr.clone().unwrap().clone().execute(&mut grid),
+            }
+        }
+
+        format!("{}", find_largest_value(grid))
     }
 
-    fn part_three(&self, _input: &str) -> String {
-        "".into()
+    fn part_three(&self, input: &str) -> String {
+        let (mut grid, mut instructions, actions) = parse_input(input);
+
+        let mut curr = Some(instructions[0].clone());
+
+        while instructions.len() > 0 {
+            for action in actions.clone() {
+                if curr.is_none() {
+                    break;
+                }
+
+                match action {
+                    Action::Take => curr = instructions.pop_front(),
+                    Action::Cycle => instructions.push_back(curr.clone().unwrap()),
+                    Action::Act => curr.clone().unwrap().clone().execute(&mut grid),
+                }
+            }
+        }
+
+        format!("{}", find_largest_value(grid))
     }
 }
 
-fn parse_input(input: &str) -> (Grid, Vec<Instruction>, Vec<Action>) {
+fn parse_input(input: &str) -> (Grid, VecDeque<Instruction>, Vec<Action>) {
     let sections = input.split("\n\n").collect::<Vec<_>>();
 
     (
@@ -67,9 +85,22 @@ fn parse_input(input: &str) -> (Grid, Vec<Instruction>, Vec<Action>) {
     )
 }
 
+fn find_largest_value(grid: Grid) -> usize {
+    grid.iter()
+        .map(|row| row.iter().sum::<usize>())
+        .max()
+        .unwrap()
+        .max(
+            (0..grid[0].len())
+                .map(|i| (0..grid.len()).map(|j| grid[j][i]).sum::<usize>())
+                .max()
+                .unwrap(),
+        )
+}
+
 type Grid = Vec<Vec<usize>>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct Instruction(Manipulation, Target);
 
 impl Instruction {
@@ -86,25 +117,37 @@ impl Instruction {
                 _ => panic!("Invalid Instruction"),
             },
             Manipulation::Add(amt) => match self.1 {
-                Target::Col(i) => grid.iter_mut().for_each(|row| row[i] += amt),
-                Target::Row(i) => grid[i].iter_mut().for_each(|v| *v += amt),
+                Target::Col(i) => grid
+                    .iter_mut()
+                    .for_each(|row| row[i] = (row[i] + amt) % 1073741824),
+                Target::Row(i) => grid[i]
+                    .iter_mut()
+                    .for_each(|v| *v = (*v + amt) % 1073741824),
                 Target::All => grid
                     .iter_mut()
-                    .for_each(|row| row.iter_mut().for_each(|v| *v += amt)),
+                    .for_each(|row| row.iter_mut().for_each(|v| *v = (*v + amt) % 1073741824)),
             },
             Manipulation::Sub(amt) => match self.1 {
-                Target::Col(i) => grid.iter_mut().for_each(|row| row[i] -= amt),
-                Target::Row(i) => grid[i].iter_mut().for_each(|v| *v -= amt),
+                Target::Col(i) => grid
+                    .iter_mut()
+                    .for_each(|row| row[i] = (row[i] - amt) % 1073741824),
+                Target::Row(i) => grid[i]
+                    .iter_mut()
+                    .for_each(|v| *v = (*v - amt) % 1073741824),
                 Target::All => grid
                     .iter_mut()
-                    .for_each(|row| row.iter_mut().for_each(|v| *v -= amt)),
+                    .for_each(|row| row.iter_mut().for_each(|v| *v = (*v - amt) % 1073741824)),
             },
             Manipulation::Multiply(amt) => match self.1 {
-                Target::Col(i) => grid.iter_mut().for_each(|row| row[i] *= amt),
-                Target::Row(i) => grid[i].iter_mut().for_each(|v| *v *= amt),
+                Target::Col(i) => grid
+                    .iter_mut()
+                    .for_each(|row| row[i] = (row[i] * amt) % 1073741824),
+                Target::Row(i) => grid[i]
+                    .iter_mut()
+                    .for_each(|v| *v = (*v * amt) % 1073741824),
                 Target::All => grid
                     .iter_mut()
-                    .for_each(|row| row.iter_mut().for_each(|v| *v *= amt)),
+                    .for_each(|row| row.iter_mut().for_each(|v| *v = (*v * amt) % 1073741824)),
             },
         }
     }
@@ -142,7 +185,7 @@ impl FromStr for Instruction {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Manipulation {
     Shift(usize),
     Add(usize),
@@ -150,14 +193,14 @@ enum Manipulation {
     Multiply(usize),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Target {
     Col(usize),
     Row(usize),
     All,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Action {
     Take,
     Cycle,
@@ -222,26 +265,12 @@ CYCLE";
     #[test]
     fn part_two_returns_correct_output() {
         let problem = Problem12;
-        assert_eq!(problem.part_two(INPUT), "");
+        assert_eq!(problem.part_two(INPUT), "11496");
     }
 
     #[test]
     fn part_three_returns_correct_output() {
         let problem = Problem12;
-        assert_eq!(problem.part_three(INPUT), "");
-    }
-
-    #[ignore]
-    #[test]
-    fn execute() {
-        let (mut grid, _, _) = parse_input(INPUT);
-
-        let instruction: Instruction = "SHIFT COL 1 BY 5".parse().unwrap();
-
-        draw_grid(&grid);
-        instruction.execute(&mut grid);
-        draw_grid(&grid);
-
-        assert!(false)
+        assert_eq!(problem.part_three(INPUT), "19022");
     }
 }
