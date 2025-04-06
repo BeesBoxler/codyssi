@@ -32,8 +32,8 @@ pub fn run() {
         Box::new(day06::Problem6),
         Box::new(day07::Problem7),
         Box::new(day08::Problem8),
-        // I somehow missed day 8? whoops
         Box::new(day09::Problem9),
+        Box::new(day10::Problem10),
     ];
 
     problems.iter().for_each(|problem| {
