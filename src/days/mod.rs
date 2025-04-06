@@ -13,6 +13,7 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
 
 pub fn run_day<P: Problem + ?Sized>(problem: &P, input: &str) {
     println!("{}", problem.get_title());
@@ -34,6 +35,7 @@ pub fn run() {
         Box::new(day08::Problem8),
         Box::new(day09::Problem9),
         Box::new(day10::Problem10),
+        Box::new(day11::Problem11),
     ];
 
     problems.iter().for_each(|problem| {

@@ -1,5 +1,8 @@
 use crate::problem::Problem;
-use std::{cmp::Reverse, collections::{binary_heap::BinaryHeap, HashMap, HashSet}};
+use std::{
+    cmp::Reverse,
+    collections::{HashMap, HashSet, binary_heap::BinaryHeap},
+};
 
 pub struct Problem10;
 
@@ -32,17 +35,19 @@ impl Problem for Problem10 {
 
     fn part_two(&self, input: &str) -> String {
         let grid = &parse_input(input);
-        format!("{}", dijkstra(grid, (14,14)).unwrap())
+        format!("{}", dijkstra(grid, (14, 14)).unwrap())
     }
 
     fn part_three(&self, input: &str) -> String {
         let grid = &parse_input(input);
-        format!("{}", dijkstra(grid, (grid.len()-1,grid[0].len()-1 )).unwrap())
+        format!(
+            "{}",
+            dijkstra(grid, (grid.len() - 1, grid[0].len() - 1)).unwrap()
+        )
     }
 }
 
 type Grid = Vec<Vec<usize>>;
-
 
 fn dijkstra(grid: &Grid, target: (usize, usize)) -> Option<usize> {
     let mut queue = BinaryHeap::from([(Reverse(grid[0][0]), (0usize, 0usize))]);
@@ -50,13 +55,17 @@ fn dijkstra(grid: &Grid, target: (usize, usize)) -> Option<usize> {
     let mut lengths = HashMap::<(usize, usize), usize>::new();
 
     while let Some((Reverse(length), pos)) = queue.pop() {
-        if pos == target { return Some(length)}
+        if pos == target {
+            return Some(length);
+        }
 
         if visited.insert(pos) {
-            for dir in [(1,0), (0,1)] {
+            for dir in [(1, 0), (0, 1)] {
                 let next_pos = (pos.0 + dir.0, pos.1 + dir.1);
-                if next_pos.0 >= grid.len() || next_pos.1 >= grid[0].len() { continue}
-                
+                if next_pos.0 >= grid.len() || next_pos.1 >= grid[0].len() {
+                    continue;
+                }
+
                 let length = length + grid[next_pos.0][next_pos.1];
                 if !visited.contains(&next_pos) {
                     let entry = lengths.entry(pos).or_insert(usize::MAX);
