@@ -42,7 +42,7 @@ impl Problem for Problem11 {
         let mut n;
         let mut len = 100;
         let mut base = 68;
-        
+
         while len > 4 {
             len = 0;
             n = sum.clone();
